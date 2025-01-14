@@ -135,12 +135,6 @@ defmodule XmlBuilder do
   <!DOCTYPE greeting SYSTEM "hello.dtd">
   <person>Josh</person>
   ```
-  """
-  def doctype(name, [{:system, system_identifier}]),
-    do: {:doctype, {:system, name, system_identifier}}
-
-  @doc """
-  Creates a DOCTYPE declaration with a public identifier.
 
   Returns a `tuple` in the format `{:doctype, [:public, name, public_identifier, system_identifier}`.  
 
@@ -164,6 +158,9 @@ defmodule XmlBuilder do
   <html>Hello, world!</html>
   ```
   """
+  def doctype(name, [{:system, system_identifier}]),
+    do: {:doctype, {:system, name, system_identifier}}
+
   def doctype(name, [{:public, [public_identifier, system_identifier]}]),
     do: {:doctype, {:public, name, public_identifier, system_identifier}}
 
