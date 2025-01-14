@@ -187,10 +187,10 @@ defmodule XmlBuilder do
     do: ~s|<?xml version="1.0" encoding="UTF-8"?>|
 
   defp format({:doctype, {:system, name, system}}, 0),
-    do: ['<!DOCTYPE ', to_string(name), ' SYSTEM "', to_string(system), '">']
+    do: [~c"<!DOCTYPE ", to_string(name), ~c" SYSTEM \"', to_string(system), ~c"\">"]
 
   defp format({:doctype, {:public, name, public, system}}, 0),
-    do: ['<!DOCTYPE ', to_string(name), ' PUBLIC "', to_string(public), '" "', to_string(system), '">']
+    do: [~c"<!DOCTYPE ", to_string(name), ~c" PUBLIC \"", to_string(public), ~c"\" \"", to_string(system), ~c"\">"]
     
   defp format(string, level) when is_bitstring(string),
     do: format({nil, nil, string}, level)
@@ -202,22 +202,22 @@ defmodule XmlBuilder do
     do: [indent(level), to_string(name)]
 
   defp format({name, attrs, content}, level) when is_blank_attrs(attrs) and is_blank_list(content),
-    do: [indent(level), '<', to_string(name), '/>']
+    do: [indent(level), ~c"<", to_string(name), ~c"/>"]
 
   defp format({name, attrs, content}, level) when is_blank_list(content),
-    do: [indent(level), '<', to_string(name), ' ', format_attributes(attrs), '/>']
+    do: [indent(level), ~c"<", to_string(name), ~c" ", format_attributes(attrs), ~c"/>"]
 
   defp format({name, attrs, content}, level) when is_blank_attrs(attrs) and not is_list(content),
-    do: [indent(level), '<', to_string(name), '>', format_content(content, level+1), '</', to_string(name), '>']
+    do: [indent(level), ~c"<", to_string(name), ~c">", format_content(content, level+1), ~c"</", to_string(name), ~c">"]
 
   defp format({name, attrs, content}, level) when is_blank_attrs(attrs) and is_list(content),
-    do: [indent(level), '<', to_string(name), '>', format_content(content, level+1), '\n', indent(level), '</', to_string(name), '>']
+    do: [indent(level), ~c"<", to_string(name), ~c">", format_content(content, level+1), ~c"\n", indent(level), ~c"</", to_string(name), ~c">"]
 
   defp format({name, attrs, content}, level) when not is_blank_attrs(attrs) and not is_list(content),
-    do: [indent(level), '<', to_string(name), ' ', format_attributes(attrs), '>', format_content(content, level+1), '</', to_string(name), '>']
+    do: [indent(level), ~c"<", to_string(name), ~c" ", format_attributes(attrs), ~c">", format_content(content, level+1), ~c"</", to_string(name), ~c">"]
 
   defp format({name, attrs, content}, level) when not is_blank_attrs(attrs) and is_list(content),
-    do: [indent(level), '<', to_string(name), ' ', format_attributes(attrs), '>', format_content(content, level+1), '\n', indent(level), '</', to_string(name), '>']
+    do: [indent(level), ~c"<", to_string(name), ~c" ", format_attributes(attrs), ~c">", format_content(content, level+1), ~c"\n", indent(level), ~c"</", to_string(name), ~c">"]
 
   defp elements_with_prolog([first | rest]) when length(rest) > 0,
     do: [first_element(first) |element(rest)]
@@ -232,13 +232,13 @@ defmodule XmlBuilder do
     do: element(element_spec)
 
   defp format_content(children, level) when is_list(children),
-    do: ['\n', Enum.map_join(children, "\n", &format(&1, level))]
+    do: [~c"\n", Enum.map_join(children, "\n", &format(&1, level))]
 
   defp format_content(content, _level),
     do: escape(content)
 
   defp format_attributes(attrs),
-    do: Enum.map_join(attrs, " ", fn {name,value} -> [to_string(name), '=', quote_attribute_value(value)] end)
+    do: Enum.map_join(attrs, " ", fn {name,value} -> [to_string(name), ~c"=", quote_attribute_value(value)] end)
 
   defp indent(level),
     do: String.duplicate("\t", level)
