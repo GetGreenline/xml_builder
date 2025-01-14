@@ -187,7 +187,7 @@ defmodule XmlBuilder do
     do: ~s|<?xml version="1.0" encoding="UTF-8"?>|
 
   defp format({:doctype, {:system, name, system}}, 0),
-    do: [~c"<!DOCTYPE ", to_string(name), ~c" SYSTEM \"', to_string(system), ~c"\">"]
+    do: [~c"<!DOCTYPE ", to_string(name), ~c" SYSTEM \"", to_string(system), ~c"\">"]
 
   defp format({:doctype, {:public, name, public, system}}, 0),
     do: [~c"<!DOCTYPE ", to_string(name), ~c" PUBLIC \"", to_string(public), ~c"\" \"", to_string(system), ~c"\">"]
